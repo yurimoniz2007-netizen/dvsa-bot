@@ -1,0 +1,28 @@
+name: DVSA Bot
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - run: pip install -r requirements.txt
+
+    - run: sudo apt-get update && sudo apt-get install -y chromium-browser
+
+    - name: Run bot
+      env:
+        DVSA_EMAIL: ${{ secrets.DVSA_EMAIL }}
+        DVSA_PASSWORD: ${{ secrets.DVSA_PASSWORD }}
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      run: python bot.py
